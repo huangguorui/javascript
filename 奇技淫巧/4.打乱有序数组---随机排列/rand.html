@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <style type="text/css">
+
+    </style>
+</head>
+<body>
+
+</body>
+</html>
+
+
+<script type="text/javascript">
+/**/
+//随机数组
+
+//生成有序数组
+var arr=[];
+for(var i=0;i<9;i++){
+    arr.push(i);
+}
+//生成无序数组
+var cur=[];
+for(var i=0;i<9;i++){
+    //每执行一次，就减少一个
+    index = parseInt(Math.random()*arr.length);
+    //添加arr数组的
+    cur.push(arr[index]);
+    //裁剪数组
+    arr.splice(index,1);
+
+    console.log(arr);
+    //获得随机完成的数组
+    console.log(cur);
+}
+
+
+</script>
