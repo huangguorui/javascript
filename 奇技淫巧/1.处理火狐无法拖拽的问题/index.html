@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<style type="text/css">
+			#target{
+				width: 600px;
+				height: 300px;
+				background-color: orange;
+				border: 1px solid #000;
+				border-radius: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<!--必备单词：drag 拖拉  drop放下 over上面  transfer传递  data数据  set设置 data数据-->
+		<p id="text" draggable="true">console.log(1)</p>
+		<div id="target"></div>
+		<script type="text/javascript">
+			var text=document.getElementById("text");
+			var target=document.getElementById("target");
+			text.ondrag=function(){
+				console.log("dragstart 拖拽开始！");
+
+			}
+//			知识点:拖动对象的3个方法: ondragstart 当拖动开始  ondrag 拖动开始, ondragend拖动结束,一般使用第一个;
+//拖动目标的3个方法：target.ondragover 目标元素拖拽在上面，ondragenter 当拖放进入，ondragleave 当拖放离开，ondrop 当拖放结束，松开鼠标
+			text.ondragstart=function(e){
+				console.log("dragstart 开始拖拽");
+				e.dataTransfer.setData("text","baidu.com");
+			}
+//				要点1：火狐浏览器要求被拖动元素必须包含数据,所以需要给他加上数据,setData里的数据可以随便写，否则不能实现拖拽 }
+			text.ondragend=function(){
+				console.log("dragend 拖拽结束");
+			}
+			target.ondragover=function(e){
+				e.preventDefault();
+//要点2：在谷歌浏览器中，元素默认不能够拖放,在目标元素的dragover事件中取消默认事件就可以解决问题,避免无效拖拽
+				console.log("目标元素中拖拽 ondragover");
+
+			}
+			target.ondragenter=function(){
+				console.log("拖动进入目标元素ondragenter");
+			}
+			target.ondragleave=function(){
+				console.log("拖动离开目标元素");
+			}
+			target.ondrop=function(e){
+				console.log("ondrop拖放");
+				console.log(e.dataTransfer.getData("text"));
+				e.stopPropagation();
+//				要点3:在拖放中，利用事件,停止冒泡,可以防止在火狐中拖拽打开新窗口的bug
+			}
+		</script>
+	</body>
+</html>
+
+<script type="text/javascript">
+
+/*e.transfer.setData
+
+stoppropagation*/
+
+
+</script>

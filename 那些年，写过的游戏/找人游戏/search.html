@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		* { margin: 0; padding: 0; }
+		.box { 
+			position: relative; 
+			width: 400px; 
+			height: 550px; 
+			margin: 0 auto; 
+			background: #ccc;
+		}
+		#time { 
+			position: absolute; 
+			top: 20px; 
+			left: 20px; 
+			font-size: 20px; 
+		}
+		#score { 
+			position: absolute; 
+			top: 20px; 
+			right: 20px; 
+			font-size: 20px; }
+		#btn { 
+			position: absolute; 
+			top: 60px; 
+			left: 50%; 
+			width: 50px; 
+			height: 40px; 
+			margin-left: -25px; 
+			border: 0; 
+			background: green; 
+			font-size: 20px; 
+			color: #fff; 
+			cursor: pointer; 
+		}
+		#loading { 
+			position: absolute; 
+			width: 100%; 
+			height: 100%; 
+			background: #000; 
+			text-align: center; 
+			font-size: 30px; 
+			color: #fff;}
+		#wrap { 
+			position: absolute; 
+			top: 150px; 
+			left: 15%; 
+			width: 70%;
+			height:100%;
+		}
+		#wrap img { 
+			width:100%;
+			margin: 10px 0 0 10px; 
+		}
+	</style>
+</head>
+<body>
+	<div class="box"> 
+		<p id="time">剩余时间：<span id="timeZone">20.00</span>秒</p>
+		<p id="score">分数：0</p>
+		<input type="button" value="开始" id="btn" />
+		<div id="wrap"><!--房祖名们的父级-->
+			<img src="images/1.png" alt="" />
+		</div>
+		<div id="loading">loading.....</div>
+	</div>
+	<script type="text/javascript">
+		!function(){
+			//思路(需求)：
+			//1 当图片资源存在时让loading隐藏，出现1.png
+			//2 点击开始按钮
+			//2.1 由1张图片->4张 
+			//		图片宽度缩小
+			//		其中1张为FZM,其他3张为干扰(随机数)
+			//		为图片click绑定逻辑，click FZM时会加分及刷新图片，click其他图片时，只会刷新
+			//2.2 开始button隐藏
+			//2.3 开始倒计时
+			//3 点击图片时：
+			//3.1 图片张数由n*n->//(n+1)*(n+1)如果当前图片张数已达9*9,则不再增加
+			//		图片背景色发生随机变化(随机数)
+			//3.2 如果点到FZM 那么分数+1并显示
+			//3.3 否则，不加分
+			//3.4 如果时间到，则点击无反应
+			
+			//列出所有资源并获取元素
+			var start = document.querySelector('#btn'),
+				wrap = document.querySelector('#wrap'),
+				scoreBox = document.querySelector('#score'),
+				timeBox = document.querySelector('#timeZone'),
+				loading = document.querySelector('#loading');
+			var imgs = ['images/1.png','images/2.png'],
+				colors = ["#339966","#0099FF","#6600FF","#993366","#FF3399","#FFCC99","#CCCC99","#66FFCC","#CC3300"],
+				marginL = 10,
+				wrapW = wrap.offsetWidth,
+				time = 20,
+				score = 0,
+				//默认处于第一轮，显示一张图片
+				round = 1;
+			//默认可用图片资源张数		
+			var source = 0;
+			//测试图片是否可用
+			for(var i=0;i<imgs.length;i++){
+				var img = new Image()
+				//载入图片成功时
+				img.onload = function(){
+					source++;
+					console.log(source);
+					if(source>=imgs.length){
+						loading.style.display = 'none';
+					}
+				}
+				img.src = imgs[i];
+			}
+			//游戏开始
+			start.onclick = function(){
+				countDown();
+				refresh();
+				this.style.display = 'none';
+			}
+
+			//刷新图片
+			function refresh(){
+				if(time<=0){
+					alert('时间到!');
+					return;
+				}
+				if(round<9){
+					round++;
+				}
+				//确定新生成图片的张数
+				var num = round*round;
+				//确定第几张为FZM
+				var desc = rand(0,num-1);
+				//确定本轮图片背景色
+				var color = colors[rand(0,colors.length-1)]
+				wrap.innerHTML = '';
+				//循环生成新图片
+				for(var i=0;i<num;i++){
+					var img = new Image();
+					img.style.width = parseInt(wrapW/round-marginL)+'px';
+					img.style.backgroundColor = color;
+					if(i==desc){
+						img.src=imgs[1]
+						//click房祖名时
+						img.onclick = function(){
+							console.log(num)
+							score++;
+							scoreBox.innerHTML = '分数：'+score;
+							refresh()
+						}
+					}else{
+						img.src=imgs[0];
+						//click干扰图片
+						img.onclick = function(){
+							console.log(num)
+							refresh()
+						}
+					}
+					wrap.appendChild(img);
+				}
+			}	
+
+			//倒计时
+			function countDown(){
+				time-=0.1;
+				if(time<=0) 
+					time=0;
+				timeBox.innerHTML = time.toFixed(2);
+				var timer = setTimeout(countDown,100)
+				if(time<=0) 
+					clearTimeout(timer);
+			}
+			//随机数
+			function rand(min,max){
+				return min+parseInt(Math.random()*(max-min+1));
+			}		
+		}()
+	</script>
+</body>
+</html>
